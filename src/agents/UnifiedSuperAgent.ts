@@ -1,14 +1,14 @@
-import { ChatOpenAI } from "@langchain/openai";
+import { ChatGroq } from "@langchain/groq";
 import { TiDBService } from "../lib/tidb";
 import { AdaptiveLearningEngine } from "./AdaptiveLearningEngine";
 import { SalesIntelligence } from "./SalesIntelligence";
 import { SessionManager, UserState } from "../lib/session";
 
 export class UnifiedSuperAgent {
-  private llm = new ChatOpenAI({ 
-    modelName: "gpt-4o", 
+  private llm = new ChatGroq({ 
+    modelName: "llama-3.1-70b-versatile", 
     temperature: 0,
-    openAIApiKey: process.env.OPENAI_API_KEY
+    apiKey: process.env.GROQ_API_KEY
   });
   private learning = new AdaptiveLearningEngine();
   private sales = new SalesIntelligence();

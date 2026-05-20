@@ -9,7 +9,8 @@
     "seed": "npx tsx scripts/seedJobs.ts"
   },
   "dependencies": {
-    "@langchain/openai": "^0.0.28",
+    "@langchain/google-genai": "^2.1.31",
+    "@langchain/groq": "^1.2.1",
     "bullmq": "^5.7.0",
     "dotenv": "^16.4.5",
     "framer-motion": "^11.0.24",

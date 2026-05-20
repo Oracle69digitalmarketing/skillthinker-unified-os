@@ -1,5 +1,5 @@
 import mysql from 'mysql2/promise';
-import { OpenAIEmbeddings } from "@langchain/openai";
+import { GoogleGenerativeAIEmbeddings } from "@langchain/google-genai";
 
 const pool = mysql.createPool({
   host: process.env.TIDB_HOST,
@@ -10,9 +10,9 @@ const pool = mysql.createPool({
   ssl: { minVersion: 'TLSv1.2', rejectUnauthorized: true }
 });
 
-const embeddings = new OpenAIEmbeddings({ 
-  modelName: "text-embedding-3-small",
-  openAIApiKey: process.env.OPENAI_API_KEY 
+const embeddings = new GoogleGenerativeAIEmbeddings({ 
+  modelName: "embedding-001",
+  apiKey: process.env.GEMINI_API_KEY 
 });
 
 export const TiDBService = {

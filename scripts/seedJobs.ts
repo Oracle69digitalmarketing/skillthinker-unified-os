@@ -1,13 +1,13 @@
 import { TiDBService } from "../src/lib/tidb";
-import { OpenAIEmbeddings } from "@langchain/openai";
+import { GoogleGenerativeAIEmbeddings } from "@langchain/google-genai";
 import { v4 as uuidv4 } from "uuid";
 import dotenv from "dotenv";
 
 dotenv.config();
 
-const embeddings = new OpenAIEmbeddings({
-  modelName: "text-embedding-3-small",
-  openAIApiKey: process.env.OPENAI_API_KEY,
+const embeddings = new GoogleGenerativeAIEmbeddings({
+  modelName: "embedding-001",
+  apiKey: process.env.GEMINI_API_KEY,
 });
 
 const sampleJobs = [

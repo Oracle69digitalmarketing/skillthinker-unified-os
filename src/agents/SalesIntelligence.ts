@@ -1,10 +1,10 @@
-import { ChatOpenAI } from "@langchain/openai";
+import { ChatGroq } from "@langchain/groq";
 
 export class SalesIntelligence {
-  private llm = new ChatOpenAI({ 
-    modelName: "gpt-4o", 
+  private llm = new ChatGroq({ 
+    modelName: "llama-3.1-70b-versatile", 
     temperature: 0,
-    openAIApiKey: process.env.OPENAI_API_KEY
+    apiKey: process.env.GROQ_API_KEY
   });
 
   async tagLead(agentId: string, message: string) {
