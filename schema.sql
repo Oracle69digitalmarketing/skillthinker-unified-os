@@ -3,7 +3,7 @@ CREATE TABLE IF NOT EXISTS users (
     id VARCHAR(36) PRIMARY KEY,
     whatsapp_number VARCHAR(20) UNIQUE,
     current_goal ENUM('job', 'entrepreneur'),
-    skill_vector VECTOR(1536), 
+    skill_vector VECTOR(768), 
     credit_score INT DEFAULT 500
 );
 
@@ -43,5 +43,5 @@ CREATE TABLE IF NOT EXISTS jobs (
     company_name VARCHAR(100),
     description TEXT,
     requirements TEXT,
-    description_vector VECTOR(1536)
+    description_vector VECTOR(768)
 );
