@@ -1,14 +1,14 @@
-import { ChatGroq } from "@langchain/groq";
+import { ChatGoogleGenerativeAI } from "@langchain/google-genai";
 import { TiDBService } from "../lib/tidb";
 import { AdaptiveLearningEngine } from "./AdaptiveLearningEngine";
 import { SalesIntelligence } from "./SalesIntelligence";
 import { SessionManager, UserState } from "../lib/session";
 
 export class UnifiedSuperAgent {
-  private llm = new ChatGroq({ 
-    modelName: "llama-3.1-70b-versatile", 
+  private llm = new ChatGoogleGenerativeAI({ 
+    modelName: "gemini-2.0-flash", 
     temperature: 0,
-    apiKey: process.env.GROQ_API_KEY
+    apiKey: process.env.GEMINI_API_KEY
   });
   private learning = new AdaptiveLearningEngine();
   private sales = new SalesIntelligence();

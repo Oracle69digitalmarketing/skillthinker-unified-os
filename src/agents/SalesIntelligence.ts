@@ -1,10 +1,10 @@
-import { ChatGroq } from "@langchain/groq";
+import { ChatGoogleGenerativeAI } from "@langchain/google-genai";
 
 export class SalesIntelligence {
-  private llm = new ChatGroq({ 
-    modelName: "llama-3.1-70b-versatile", 
+  private llm = new ChatGoogleGenerativeAI({ 
+    modelName: "gemini-2.0-flash", 
     temperature: 0,
-    apiKey: process.env.GROQ_API_KEY
+    apiKey: process.env.GEMINI_API_KEY
   });
 
   async tagLead(agentId: string, message: string) {
