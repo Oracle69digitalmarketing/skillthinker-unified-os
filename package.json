@@ -5,8 +5,8 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "worker": "ts-node src/workers/agentWorker.ts",
-    "seed": "ts-node scripts/seedJobs.ts"
+    "worker": "npx tsx src/workers/agentWorker.ts",
+    "seed": "npx tsx scripts/seedJobs.ts"
   },
   "dependencies": {
     "@langchain/openai": "^0.0.28",
@@ -20,14 +20,14 @@
     "next": "14.1.4",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
+    "ts-node": "^10.9.2",
     "twilio": "^5.0.4",
-    "uuid": "^9.0.1",
-    "ts-node": "^10.9.2"
+    "uuid": "^9.0.1"
   },
   "devDependencies": {
+    "@types/node": "^20.11.0",
     "@types/react": "19.2.14",
     "@types/uuid": "^9.0.8",
-    "@types/node": "^20.11.0",
-    "typescript": "6.0.3"
+    "typescript": "^5.4.5"
   }
 }
