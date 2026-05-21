@@ -10,14 +10,14 @@ import axios from "axios";
 export class UnifiedSuperAgent {
   // Groq for Deep Reasoning
   private reasoningLLM = new ChatGroq({ 
-    modelName: "llama-3.3-70b-versatile", 
+    model: "llama-3.3-70b-versatile", 
     temperature: 0,
     apiKey: process.env.GROQ_API_KEY
   });
 
   // Gemini 2.0 Flash for Fast Search, Intent & Audio
   private flashLLM = new ChatGoogleGenerativeAI({
-    modelName: "models/gemini-2.0-flash-001",
+    model: "models/gemini-2.0-flash-001",
     maxOutputTokens: 2048,
     apiKey: process.env.GOOGLE_API_KEY || process.env.GEMINI_API_KEY
   });
