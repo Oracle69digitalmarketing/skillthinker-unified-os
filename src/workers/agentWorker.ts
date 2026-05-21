@@ -1,5 +1,5 @@
 import { Worker } from 'bullmq';
-import { UnifiedSuperAgent } from '../agents/UnifiedSuperAgent';
+import { UnifiedSuperAgent } from '../agents/UnifiedSuperAgent.js';
 import Redis from 'ioredis';
 import twilio from 'twilio';
 
@@ -12,11 +12,11 @@ const twilioClient = twilio(
 );
 
 const worker = new Worker('agent-processing', async (job) => {
-  const { userId, input } = job.data;
+  const { userId, input, mediaUrl } = job.data;
   console.log(`[Worker] Processing input for ${userId}...`);
   
   try {
-    const result = await agent.handleInteraction(userId, input);
+    const result = await agent.handleInteraction(userId, input, mediaUrl);
     
     // Send back to WhatsApp via Twilio
     await twilioClient.messages.create({

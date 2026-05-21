@@ -1,10 +1,10 @@
-import { ChatGoogleGenerativeAI } from "@langchain/google-genai";
+import { ChatGroq } from "@langchain/groq";
 
 export class SalesIntelligence {
-  private llm = new ChatGoogleGenerativeAI({ 
-    modelName: "gemini-2.0-flash", 
+  private llm = new ChatGroq({ 
+    modelName: "llama-3.3-70b-versatile", 
     temperature: 0,
-    apiKey: process.env.GEMINI_API_KEY
+    apiKey: process.env.GROQ_API_KEY
   });
 
   async tagLead(agentId: string, message: string) {
@@ -21,7 +21,10 @@ export class SalesIntelligence {
 
     const response = await this.llm.invoke(prompt);
     try {
-        return JSON.parse(response.content.toString());
+        // Handle potential markdown code blocks in Groq response
+        const content = response.content.toString();
+        const jsonMatch = content.match(/\{.*\}/s);
+        return JSON.parse(jsonMatch ? jsonMatch[0] : content);
     } catch (e) {
         console.error("Failed to parse lead JSON", e);
         return { product: "unknown", urgency: "cold", dialect: "unknown", response: "I'll get back to you." };

@@ -1,25 +1,59 @@
 import { ChatGroq } from "@langchain/groq";
-import { TiDBService } from "../lib/tidb";
-import { AdaptiveLearningEngine } from "./AdaptiveLearningEngine";
-import { SalesIntelligence } from "./SalesIntelligence";
-import { SessionManager, UserState } from "../lib/session";
+import { ChatGoogleGenerativeAI } from "@langchain/google-genai";
+import { HumanMessage } from "@langchain/core/messages";
+import { TiDBService } from "../lib/tidb.js";
+import { AdaptiveLearningEngine } from "./AdaptiveLearningEngine.js";
+import { SalesIntelligence } from "./SalesIntelligence.js";
+import { SessionManager, UserState } from "../lib/session.js";
+import axios from "axios";
 
 export class UnifiedSuperAgent {
-  private llm = new ChatGroq({ 
-    modelName: "llama-3.1-70b-versatile", 
+  // Groq for Deep Reasoning
+  private reasoningLLM = new ChatGroq({ 
+    modelName: "llama-3.3-70b-versatile", 
     temperature: 0,
     apiKey: process.env.GROQ_API_KEY
   });
+
+  // Gemini 2.0 Flash for Fast Search, Intent & Audio
+  private flashLLM = new ChatGoogleGenerativeAI({
+    modelName: "models/gemini-2.0-flash-001",
+    maxOutputTokens: 2048,
+    apiKey: process.env.GOOGLE_API_KEY
+  });
+
   private learning = new AdaptiveLearningEngine();
   private sales = new SalesIntelligence();
 
-  async handleInteraction(userId: string, input: string) {
-    // 1. Get current session state
+  async handleInteraction(userId: string, input: string, mediaUrl?: string) {
     const session = await SessionManager.getState(userId);
+    let transcription = input;
+
+    // 1. Process Voice Note if present
+    if (input === 'voice_note' && mediaUrl) {
+      console.log(`[SuperAgent] Processing voice note from ${mediaUrl}...`);
+      try {
+        const response = await axios.get(mediaUrl, { responseType: 'arraybuffer' });
+        const base64Audio = Buffer.from(response.data).toString('base64');
+        
+        const audioMessage = new HumanMessage({
+          content: [
+            { type: "text", text: "Transcribe and summarize this voice note in the context of a career assistant." },
+            { type: "media", mimeType: "audio/ogg", data: base64Audio }
+          ]
+        });
+        
+        const geminiResponse = await this.flashLLM.invoke([audioMessage]);
+        transcription = geminiResponse.content.toString();
+        console.log(`[SuperAgent] Transcription: ${transcription}`);
+      } catch (error) {
+        console.error("Failed to process voice note:", error);
+        transcription = "The user sent a voice note but I couldn't process it.";
+      }
+    }
     
-    // 2. If in a specific state, bypass intent classification
     if (session.state === UserState.TAKING_QUIZ) {
-       const quizResult = await this.learning.evaluate(userId, input);
+       const quizResult = await this.learning.evaluate(userId, transcription);
        if (quizResult.streak >= 5) {
          await SessionManager.setState(userId, UserState.IDLE);
          return { message: `Amazing! You've mastered this topic. 🎓 Your proficiency is ${quizResult.newScore}%. I'll look for jobs matching your new skills!` };
@@ -27,21 +61,20 @@ export class UnifiedSuperAgent {
        return { message: quizResult.isCorrect ? `Correct! 🎯 Next question...` : `Not quite. 💡 Hint: ${quizResult.hint}` };
     }
 
-    // 3. Analyze Intent using LLM for IDLE users
-    const intentPrompt = `Analyze this user message: "${input}". 
+    // 2. Analyze Intent using Gemini 2.0 Flash
+    const intentPrompt = `Analyze this user message: "${transcription}". 
     Categorize as: 
     - FIND_JOB (if looking for work or uploading CV)
     - TAKE_QUIZ (if wanting to learn or take a test)
     - SALES_UPDATE (if reporting a sale or customer lead)
     Return ONLY the category name.`;
     
-    const response = await this.llm.invoke(intentPrompt);
-    const intent = response.content.toString().trim();
+    const intentResponse = await this.flashLLM.invoke(intentPrompt);
+    const intent = intentResponse.content.toString().trim();
 
-    // 4. Route to specialized logic
     switch (intent) {
       case "FIND_JOB":
-        const matches = await TiDBService.vectorSearchJobs(input);
+        const matches = await TiDBService.vectorSearchJobs(transcription);
         if (matches && matches.length > 0) {
             return {
               message: `I found a match at ${matches[0].company_name}! But you're missing a key skill. Should we start a quiz to qualify you?`,
@@ -59,14 +92,16 @@ export class UnifiedSuperAgent {
         };
 
       case "SALES_UPDATE":
-        const lead = await this.sales.tagLead(userId, input);
+        const lead = await this.sales.tagLead(userId, transcription);
         return {
           message: `Lead Tagged: ${lead.product} (${lead.urgency}). Response suggestion: "${lead.response}"`,
           action: "CRM_UPDATE"
         };
 
       default:
-        return { message: "I'm your Career Assistant. How can I help you learn or earn today?" };
+        // Use Groq for general career advice reasoning
+        const adviceResponse = await this.reasoningLLM.invoke(`As a career coach, respond to: "${transcription}"`);
+        return { message: adviceResponse.content.toString() };
     }
   }
 }

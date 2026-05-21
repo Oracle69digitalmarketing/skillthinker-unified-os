@@ -1,4 +1,4 @@
-import { TiDBService } from "../src/lib/tidb";
+import { TiDBService } from "../src/lib/tidb.js";
 import { GoogleGenerativeAIEmbeddings } from "@langchain/google-genai";
 import { v4 as uuidv4 } from "uuid";
 import dotenv from "dotenv";
@@ -6,8 +6,8 @@ import dotenv from "dotenv";
 dotenv.config();
 
 const embeddings = new GoogleGenerativeAIEmbeddings({
-  modelName: "embedding-001",
-  apiKey: process.env.GEMINI_API_KEY,
+  modelName: "models/gemini-embedding-001",
+  apiKey: process.env.GOOGLE_API_KEY,
 });
 
 const sampleJobs = [

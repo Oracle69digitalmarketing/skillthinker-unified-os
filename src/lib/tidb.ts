@@ -1,5 +1,8 @@
 import mysql from 'mysql2/promise';
 import { GoogleGenerativeAIEmbeddings } from "@langchain/google-genai";
+import dotenv from 'dotenv';
+
+dotenv.config();
 
 const pool = mysql.createPool({
   host: process.env.TIDB_HOST,
@@ -11,8 +14,8 @@ const pool = mysql.createPool({
 });
 
 const embeddings = new GoogleGenerativeAIEmbeddings({ 
-  modelName: "embedding-001",
-  apiKey: process.env.GEMINI_API_KEY 
+  modelName: "models/gemini-embedding-001", 
+  apiKey: process.env.GOOGLE_API_KEY 
 });
 
 export const TiDBService = {
@@ -20,7 +23,7 @@ export const TiDBService = {
   async vectorSearchJobs(queryText: string) {
     const vector = await embeddings.embedQuery(queryText);
     const [rows]: any = await pool.execute(
-      `SELECT job_title, company_name, job_description, 
+      `SELECT title as job_title, company_name, description as job_description, 
        VEC_COSINE_DISTANCE(description_vector, ?) AS distance 
        FROM jobs ORDER BY distance ASC LIMIT 3`,
       [JSON.stringify(vector)]
