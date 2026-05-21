@@ -1,3 +1,3 @@
 #!/bin/bash
-node dist/workers/agentWorker.js &
+npm run worker &
 npm start -- -p 7860
