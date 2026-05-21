@@ -15,7 +15,7 @@ const pool = mysql.createPool({
 
 const embeddings = new GoogleGenerativeAIEmbeddings({ 
   modelName: "models/gemini-embedding-001", 
-  apiKey: process.env.GOOGLE_API_KEY 
+  apiKey: process.env.GOOGLE_API_KEY || process.env.GEMINI_API_KEY
 });
 
 export const TiDBService = {

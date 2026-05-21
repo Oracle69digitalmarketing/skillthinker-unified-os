@@ -19,7 +19,7 @@ export class UnifiedSuperAgent {
   private flashLLM = new ChatGoogleGenerativeAI({
     modelName: "models/gemini-2.0-flash-001",
     maxOutputTokens: 2048,
-    apiKey: process.env.GOOGLE_API_KEY
+    apiKey: process.env.GOOGLE_API_KEY || process.env.GEMINI_API_KEY
   });
 
   private learning = new AdaptiveLearningEngine();
