@@ -3,7 +3,9 @@ import { UnifiedSuperAgent } from '../agents/UnifiedSuperAgent.js';
 import Redis from 'ioredis';
 import twilio from 'twilio';
 
-const connection = new Redis(process.env.REDIS_URL!);
+const connection = new Redis(process.env.REDIS_URL!, {
+  maxRetriesPerRequest: null,
+});
 const agent = new UnifiedSuperAgent();
 
 const twilioClient = twilio(

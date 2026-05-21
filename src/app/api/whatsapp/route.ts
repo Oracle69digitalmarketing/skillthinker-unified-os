@@ -3,7 +3,9 @@ import { Queue } from 'bullmq';
 import IORedis from 'ioredis';
 
 // Use Upstash Redis or local
-const connection = new IORedis(process.env.REDIS_URL || 'redis://localhost:6379');
+const connection = new IORedis(process.env.REDIS_URL || 'redis://localhost:6379', {
+  maxRetriesPerRequest: null,
+});
 const agentQueue = new Queue('agent-processing', { connection });
 
 export async function POST(req: Request) {
