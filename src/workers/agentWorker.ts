@@ -21,11 +21,17 @@ const worker = new Worker('agent-processing', async (job) => {
     const result = await agent.handleInteraction(userId, input, mediaUrl);
     
     // Send back to WhatsApp via Twilio
-    await twilioClient.messages.create({
+    const messageOptions: any = {
       body: result.message,
       from: process.env.TWILIO_PHONE_NUMBER || 'whatsapp:+14155238886',
       to: userId
-    });
+    };
+
+    if (result.mediaUrl) {
+      messageOptions.mediaUrl = [result.mediaUrl];
+    }
+
+    await twilioClient.messages.create(messageOptions);
     
     return result;
   } catch (error) {

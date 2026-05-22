@@ -16,14 +16,22 @@ export async function POST(req: Request) {
     const From = params.get('From'); // e.g., whatsapp:+1234567890
     const Body = params.get('Body');
     const MediaUrl0 = params.get('MediaUrl0');
+    
+    // Check for WhatsApp Flows / Interactive response
+    const ButtonPayload = params.get('ButtonPayload');
+    const FlowResponse = params.get('FlowResponse'); // This is where Meta sends JSON from Flows
 
-    if (!From || (!Body && !MediaUrl0)) {
-      return NextResponse.json({ status: 'ignored', reason: 'Missing From or Body' });
+    if (!From || (!Body && !MediaUrl0 && !ButtonPayload && !FlowResponse)) {
+      return NextResponse.json({ status: 'ignored', reason: 'Missing From or content' });
     }
 
-    // Determine if it's a voice note
+    // Determine input type
     let input = Body || '';
-    if (MediaUrl0) {
+    if (FlowResponse) {
+      input = `FLOW_RESPONSE:${FlowResponse}`;
+    } else if (ButtonPayload) {
+      input = `BUTTON:${ButtonPayload}`;
+    } else if (MediaUrl0) {
       input = 'voice_note';
     }
 
@@ -31,7 +39,8 @@ export async function POST(req: Request) {
     await agentQueue.add('process-whatsapp', {
       userId: From,
       input,
-      mediaUrl: MediaUrl0
+      mediaUrl: MediaUrl0,
+      isInteractive: !!(FlowResponse || ButtonPayload)
     });
 
     // Immediate TwiML response

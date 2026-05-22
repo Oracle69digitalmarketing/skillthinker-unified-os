@@ -1,0 +1,74 @@
+{
+  "name": "SkillThinker Onboarding",
+  "categories": ["SURVEY"],
+  "screens": [
+    {
+      "id": "ONBOARDING",
+      "title": "Welcome to SkillThinker",
+      "data": {},
+      "layout": {
+        "type": "RootLayout",
+        "children": [
+          {
+            "type": "TextHeading",
+            "text": "Tell us about your career goals"
+          },
+          {
+            "type": "Dropdown",
+            "label": "Current Goal",
+            "name": "current_goal",
+            "required": true,
+            "options": [
+              { "id": "job", "title": "Find a new job" },
+              { "id": "entrepreneur", "title": "Start a business" }
+            ]
+          },
+          {
+            "type": "TextInput",
+            "label": "Target Industry",
+            "name": "industry",
+            "required": true
+          },
+          {
+            "type": "Footer",
+            "label": "Get Started",
+            "on-click-action": {
+              "name": "navigate",
+              "payload": {
+                "screen": "SUCCESS"
+              }
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "SUCCESS",
+      "title": "Profile Updated",
+      "data": {},
+      "layout": {
+        "type": "RootLayout",
+        "children": [
+          {
+            "type": "TextHeading",
+            "text": "You're all set!"
+          },
+          {
+            "type": "TextBody",
+            "text": "Coach Alex is now analyzing the best opportunities for you."
+          },
+          {
+            "type": "Footer",
+            "label": "Back to Chat",
+            "on-click-action": {
+              "name": "complete",
+              "payload": {
+                "status": "success"
+              }
+            }
+          }
+        ]
+      }
+    }
+  ]
+}

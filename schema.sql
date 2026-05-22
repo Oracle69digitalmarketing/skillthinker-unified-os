@@ -4,6 +4,7 @@ CREATE TABLE IF NOT EXISTS users (
     whatsapp_number VARCHAR(20) UNIQUE,
     current_goal ENUM('job', 'entrepreneur'),
     skill_vector VECTOR(768), 
+    raw_cv_text TEXT,
     credit_score INT DEFAULT 500
 );
 
@@ -15,6 +16,17 @@ CREATE TABLE IF NOT EXISTS proficiencies (
     badges JSON,
     streak INT DEFAULT 0,
     PRIMARY KEY (user_id, topic)
+);
+
+-- Recommendations & Affiliates
+CREATE TABLE IF NOT EXISTS recommendations (
+    id VARCHAR(36) PRIMARY KEY,
+    user_id VARCHAR(36),
+    platform VARCHAR(50),
+    course_name VARCHAR(255),
+    affiliate_url TEXT,
+    clicked BOOLEAN DEFAULT FALSE,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
 -- Sales & Leads (AutoRep)
