@@ -89,7 +89,7 @@ export class AdaptiveLearningEngine {
     const cvText = userRows?.[0]?.raw_cv_text || "";
 
     const llm = new ChatGroq({ 
-      modelName: "llama-3.1-70b-versatile", 
+      model: "llama-3.3-70b-versatile", 
       temperature: 0,
       apiKey: process.env.GROQ_API_KEY
     });
