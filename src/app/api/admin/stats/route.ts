@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { TiDBService } from '../../../lib/tidb.js';
+import { TiDBService } from '../../../../lib/tidb';
 
 export async function GET() {
   try {
