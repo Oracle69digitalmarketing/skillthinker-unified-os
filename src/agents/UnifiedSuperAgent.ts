@@ -10,7 +10,7 @@ import { VoiceProcessor } from "../lib/voiceProcessor.js";
 export class UnifiedSuperAgent {
   // Groq for Deep Reasoning
   private llm = new ChatGroq({ 
-    modelName: "llama-3.3-70b-versatile", 
+    model: "llama-3.3-70b-versatile", 
     temperature: 0,
     apiKey: process.env.GROQ_API_KEY
   });
